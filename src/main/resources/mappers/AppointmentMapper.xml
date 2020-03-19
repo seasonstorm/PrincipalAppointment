@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cuit.dao.AppointmentMapper" >
+    <resultMap id="BaseResultMap" type="com.cuit.entity.Appointment" >
+        <id column="CODE" property="code" jdbcType="VARCHAR" />
+        <result column="SCHOOL_CODE" property="schoolCode" jdbcType="INTEGER" />
+        <result column="HEADMASTER_CODE" property="headmasterCode" jdbcType="INTEGER" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="APPOINTMENT_DATE" property="appointmentDate" jdbcType="VARCHAR" />
+        <result column="APPOINTMENT_TIME" property="appointmentTime" jdbcType="VARCHAR" />
+        <result column="RECORD_TIME" property="recordTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+    CODE, SCHOOL_CODE, HEADMASTER_CODE, NAME, PHONE, APPOINTMENT_DATE, APPOINTMENT_TIME, 
+    RECORD_TIME
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from TN_APPOINTMENT
+        where CODE = #{code,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from TN_APPOINTMENT
+    where CODE = #{code,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.cuit.entity.Appointment" >
+    insert into TN_APPOINTMENT (CODE, SCHOOL_CODE, HEADMASTER_CODE, 
+      NAME, PHONE, APPOINTMENT_DATE, 
+      APPOINTMENT_TIME, RECORD_TIME)
+    values (#{code,jdbcType=VARCHAR}, #{schoolCode,jdbcType=INTEGER}, #{headmasterCode,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{appointmentDate,jdbcType=VARCHAR}, 
+      #{appointmentTime,jdbcType=VARCHAR}, #{recordTime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.cuit.entity.Appointment" >
+        insert into TN_APPOINTMENT
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                CODE,
+            </if>
+            <if test="schoolCode != null" >
+                SCHOOL_CODE,
+            </if>
+            <if test="headmasterCode != null" >
+                HEADMASTER_CODE,
+            </if>
+            <if test="name != null" >
+                NAME,
+            </if>
+            <if test="phone != null" >
+                PHONE,
+            </if>
+            <if test="appointmentDate != null" >
+                APPOINTMENT_DATE,
+            </if>
+            <if test="appointmentTime != null" >
+                APPOINTMENT_TIME,
+            </if>
+            <if test="recordTime != null" >
+                RECORD_TIME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="schoolCode != null" >
+                #{schoolCode,jdbcType=INTEGER},
+            </if>
+            <if test="headmasterCode != null" >
+                #{headmasterCode,jdbcType=INTEGER},
+            </if>
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="appointmentDate != null" >
+                #{appointmentDate,jdbcType=VARCHAR},
+            </if>
+            <if test="appointmentTime != null" >
+                #{appointmentTime,jdbcType=VARCHAR},
+            </if>
+            <if test="recordTime != null" >
+                #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cuit.entity.Appointment" >
+        update TN_APPOINTMENT
+        <set >
+            <if test="schoolCode != null" >
+                SCHOOL_CODE = #{schoolCode,jdbcType=INTEGER},
+            </if>
+            <if test="headmasterCode != null" >
+                HEADMASTER_CODE = #{headmasterCode,jdbcType=INTEGER},
+            </if>
+            <if test="name != null" >
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                PHONE = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="appointmentDate != null" >
+                APPOINTMENT_DATE = #{appointmentDate,jdbcType=VARCHAR},
+            </if>
+            <if test="appointmentTime != null" >
+                APPOINTMENT_TIME = #{appointmentTime,jdbcType=VARCHAR},
+            </if>
+            <if test="recordTime != null" >
+                RECORD_TIME = #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where CODE = #{code,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.cuit.entity.Appointment" >
+    update TN_APPOINTMENT
+    set SCHOOL_CODE = #{schoolCode,jdbcType=INTEGER},
+      HEADMASTER_CODE = #{headmasterCode,jdbcType=INTEGER},
+      NAME = #{name,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      APPOINTMENT_DATE = #{appointmentDate,jdbcType=VARCHAR},
+      APPOINTMENT_TIME = #{appointmentTime,jdbcType=VARCHAR},
+      RECORD_TIME = #{recordTime,jdbcType=TIMESTAMP}
+    where CODE = #{code,jdbcType=VARCHAR}
+  </update>
+    <select id="selectByChoice" resultMap="BaseResultMap">
+        <!--&lt; 小于<    &gt;大于>-->
+        select * from TN_APPOINTMENT where APPOINTMENT_DATE &gt;= #{choiceMonth}
+        and APPOINTMENT_DATE &lt; DATEADD(m, 1, #{choiceMonth})
+        and SCHOOL_CODE = #{sCode} and HEADMASTER_CODE = #{hCode}
+    </select>
+
+    <select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from TN_APPOINTMENT where PHONE = #{phone}
+    </select>
+
+    <select id="selectAppointmentNumberByHCode" resultType="java.lang.Integer">
+         select count(HEADMASTER_CODE) from TN_APPOINTMENT where APPOINTMENT_DATE &gt;= #{date}
+        and APPOINTMENT_DATE &lt; DATEADD(m, 1, #{date})
+        and HEADMASTER_CODE = #{hCode}
+    </select>
+</mapper>

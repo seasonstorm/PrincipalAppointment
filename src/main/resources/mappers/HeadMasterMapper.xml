@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cuit.dao.HeadMasterMapper" >
+    <resultMap id="BaseResultMap" type="com.cuit.entity.HeadMaster" >
+        <id column="CODE" property="code" jdbcType="INTEGER" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+    CODE, NAME
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from T_HEADMASTER
+        where CODE = #{code,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from T_HEADMASTER
+    where CODE = #{code,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.cuit.entity.HeadMaster" >
+    insert into T_HEADMASTER (NAME)
+    values (#{name,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.cuit.entity.HeadMaster" >
+        insert into T_HEADMASTER
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                CODE,
+            </if>
+            <if test="name != null" >
+                NAME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="code != null" >
+                #{code,jdbcType=INTEGER},
+            </if>
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cuit.entity.HeadMaster" >
+        update T_HEADMASTER
+        <set >
+            <if test="name != null" >
+                NAME= #{name,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where CODE = #{code,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.cuit.entity.HeadMaster" >
+    update T_HEADMASTER
+    set NAME = #{name,jdbcType=VARCHAR}
+    where CODE = #{code,jdbcType=INTEGER}
+  </update>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select * from T_HEADMASTER
+    </select>
+
+
+    <select id="selectHeadMasterNameByCode" resultType="java.lang.String" parameterType="int">
+        select NAME from T_HEADMASTER WHERE CODE = #{code}
+    </select>
+</mapper>

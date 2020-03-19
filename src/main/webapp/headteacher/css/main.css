@@ -1,0 +1,66 @@
+
+body{
+	overflow-x: hidden;
+}
+
+#autoappointment,#autosearch
+ {
+	 height: 35px;
+	 width: 100%;
+	 background-color: rgb(243,243,243);
+ }
+#autosearch span{
+	margin-left: 15px;
+	line-height: 35px;
+	font-size: 15px;
+}
+#autoappointment span{
+	margin-left: 15px;
+	line-height: 35px;
+	font-size: 15px;
+}
+#color{
+	height: 100%;
+	width: 0.3%;
+	background-color: rgb(6,147,141);
+	float:left;
+}
+#frm{
+	float: left;
+	padding-left: 5%;
+}
+#schoolarea{
+	z-index:999;
+}
+#headteacher{
+	margin-left:50px;
+	position: absolute;
+	z-index:999;
+
+}
+#datechoose{
+	margin-left: 300px;
+	position: absolute;
+	z-index:999;
+}
+
+
+#header{
+	width: 100%;
+	height: 40px;
+	background-color: rgb(39,42,51);
+}
+#header span a{
+	line-height: 40px;
+	margin-right: 10px;
+	color: white;
+	float: right;
+}
+@media screen and (max-width: 1000px)
+{
+    #header,#autoappointment,#autosearch{ width:1200px;}
+}
+#checknumber{
+	margin-top: -18px;
+	position: absolute;
+}

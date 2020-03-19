@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cuit.dao.SchoolMapper" >
+    <resultMap id="BaseResultMap" type="com.cuit.entity.School" >
+        <id column="SCHOOL_CODE" property="schoolCode" jdbcType="INTEGER" />
+        <result column="SCHOOL_NAME" property="schoolName" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+    SCHOOL_CODE, SCHOOL_NAME
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from T_SCHOOL
+        where SCHOOL_CODE = #{schoolCode,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from T_SCHOOL
+    where SCHOOL_CODE = #{schoolCode,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.cuit.entity.School" >
+    insert into T_SCHOOL (SCHOOL_NAME)
+    values (#{schoolName,jdbcType=VARCHAR})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.cuit.entity.School" >
+    update T_SCHOOL
+    set SCHOOL_NAME = #{schoolName,jdbcType=VARCHAR}
+    where SCHOOL_CODE = #{schoolCode,jdbcType=INTEGER}
+  </update>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+    select * from T_SCHOOL
+  </select>
+
+    <select id="selectSchoolNameByCode" parameterType="int" resultType="java.lang.String">
+    select SCHOOL_NAME from T_SCHOOL WHERE SCHOOL_CODE = #{code}
+  </select>
+</mapper>

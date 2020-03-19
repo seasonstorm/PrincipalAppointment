@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>就业指导预约系统</title>
+
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <script src="../static/layui/layui.js"></script>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/login.js"></script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/date.css">
+
+</head>
+<body>
+
+<div id="header">
+    <span><a id="adminlogin" style="cursor:pointer;">管理员登录</a></span>
+</div>
+
+
+<br>
+<div id="autoappointment"><div id="color"></div><span>自助预约</span></div>
+
+
+<br>
+
+
+<form class="layui-form" id="frm">
+
+    <div class="layui-form-item">
+        <div class="layui-input-inline" id="schoolarea">
+            <select id="schoolareas" lay-filter="schoolareastest">
+                <option value="">选择校区</option>
+            </select>
+        </div>
+        <div class="layui-input-inline" id="headteacher">
+            <select id="headteachers"  lay-filter="headteacherstest">
+                <option value="">选择就业指导老师</option>
+            </select>
+        </div>
+        <div class="layui-input-inline" id="datechoose">
+            <input type="text" class="layui-input" id="test1" placeholder="选择日期">
+        </div>
+    </div>
+
+</form>
+
+
+
+<div id="dateform">
+</div>
+
+<div id="autosearch"><div id="color"></div><span>自助查询</span></div>
+<br>
+<div class="layui-inline" style="left: 30px;right: 30px;">
+    <label class="layui-form-label">手机号:</label>
+    <div class="layui-input-inline" style="width: 200px;">
+        <input type="tel" id="phonenumber" autocomplete="off" class="layui-input" style="height: 30px;">
+    </div>&nbsp;
+    <div class="layui-input-inline">
+        <button type="button" id="checknumber" class="layui-btn" style="height: 35px;">查询</button>
+    </div>
+</div>
+<table id="phonenumbertable"  class="layui-table" lay-skin="line" style="width: 90%;margin-left: 70px;" >
+    <colgroup>
+        <col width="150">
+        <col width="200">
+    </colgroup>
+    <thead>
+    <tr>
+        <th>校区</th>
+        <th>指导老师</th>
+        <th>日期</th>
+        <th>手机号</th>
+        <th>预约人</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
+
+
+
+<script>
+
+
+    function getNowFormatDate() {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+
+        if(month<10){
+            var currentdate = year + "年" + month+ "月" ;
+        }else{
+            var currentdate = year + "年" + month+ "月" ;
+        }
+
+        return currentdate;
+    }
+    function minDate(){
+        var now = new Date();
+        return now.getFullYear()+"年" + (now.getMonth()+1) + "月";
+    }
+    function minDate1(){
+        var now = new Date();
+        return now.getFullYear()+"-" + (now.getMonth()+1) + "-"+ now.getDate();
+    }
+
+
+    function getLoginForm(){   //获得登录框
+        layer.open({
+            id: 'LAY_layuipro2' //设定一个id，防止重复弹出
+            ,shade:0.3
+            ,title: false //不显示标题栏
+            ,closeBtn: false
+            ,area: ['400px', '480px'],
+            type: 1,
+            content:
+                '<form class="layui-form" style="background-color:rgb(1,151,137);height:420px;">' +
+
+                '<div class="layui-form-item">' +
+                '<div class="layui-inline">' +
+                '<h2 style="color:white;padding:30px;margin-left:120px;">管理员登录</h2>' +
+                '</div></div><br><br><br><br>'+
+
+
+                '<div class="layui-form-item">' +
+                '<div class="layui-inline">' +
+                '<label class="layui-form-label" style="color:white;">用户名：</label>' +
+                '<div class="layui-input-inline">' +
+                '<input type="text"  required lay-verify="required" id="username"  class="layui-input" value="">' +
+                '</div></div></div>'+
+
+                '<div class="layui-form-item">' +
+                '<div class="layui-inline">' +
+                '<label class="layui-form-label" style="color:white;">密码：</label>' +
+                '<div class="layui-input-inline">' +
+                '<input type="password"  required lay-verify="required" id="password"  class="layui-input" value="">' +
+                '</div></div></div>'+
+
+                '</form>' ,
+            btnAlign: 'c',
+            btn: ['登录', '取消']
+            ,yes:function(index,layero){
+                layui.use(['layer','jquery'], function () {
+                    var layer=layui.layer,
+                        $=layui.jquery;
+                    if($('#username').val().length==0&&$($('#username').val()=="")){
+                        layer.msg('用户名为空', {
+                            icon: 2,
+                            time: 1000
+                        }, function(){
+                        });
+                    }
+                    else if($('#password').val().length==0&&$($('#password').val()=="")){
+                        layer.msg('密码为空', {
+                            icon: 2,
+                            time: 1000
+                        }, function(){
+                        });
+                    }else{
+                        $.ajax({
+                            dataType:'text',
+                            url:'/reserve/admin/login.do',
+                            type:'post',
+                            data:{
+                                username:$('#username').val(),
+                                password:$('#password').val()
+                            },
+                            success:function (data) {
+                                if(data=="0"){
+                                    layer.msg('登录失败，用户名或密码错误.', {
+                                        icon: 2,
+                                        time: 1000
+                                    }, function(){
+                                    });
+                                }
+                                else{
+                                    window.location.href="/reserve/headteacher/admindir/adminCheck.html";
+                                    layer.close(index);
+                                }
+                            },
+                            error:function (e) {
+                                console.log(e);
+                            }
+                        })
+
+                    }
+                })
+
+
+
+            }
+            ,success: function(index,layero){
+                layui.use('form', function () {
+                    var form = layui.form;
+                });
+            }
+        });
+
+    };
+
+
+    layui.use(['layer', 'form','jquery','laydate'] , function(){
+        var layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate,
+            form = layui.form;
+            var  data={};
+        form.on('select(schoolareastest)', function(data){
+            $('#dateform').html('');
+            updtetable();
+        });
+        form.on('select(headteacherstest)', function(data){
+            $('#dateform').html('');
+            updtetable();
+        });
+        laydate.render({
+            elem: '#test1'
+            ,min:minDate()
+            ,type:"month"
+            ,format:'yyyy年MM月'
+            ,btns: ['confirm']
+            ,done: function(value, date, endDate){
+                var y = value.substr(0,4);
+                var m= value.substr(5,6);
+                var mm=m.substr(0,2);
+                var day=y+"-"+mm+"-01";
+                $('#dateform').html('');
+                if($("#headteachers").val().length!=0&&$("#headteachers").val()!=""&&$("#schoolareas").val()!=""&&$("#schoolareas").val().length!=0){
+                    loding_date(day ,data);
+                    $(".layui-laydate-header").remove();
+                    $(".layui-laydate-footer").remove();
+                    $('#dateform .layui-laydate-content table tr .layui-this').css('background-color','white').css('color','black');
+                    var iii=0;
+                    $("#dateform .layui-laydate-content table tbody tr td").each(function() {
+                        if(iii==0||iii==6||iii==7||iii==13||iii==14||iii==20||iii==21||iii==27||iii==28||iii==34||iii==35){
+                            $(this).append('<div>&nbsp;</div><div style="color:red;">不可预约</div><div>&nbsp;</div>');
+                            $(this).css('color','#d2d2d2');
+                        }
+                        else if(new Date($(this).attr("lay-ymd")) < new Date(minDate1())){
+                            $(this).append('<div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div>');
+                            $(this).css('color','#d2d2d2');
+                        }
+                        else{
+                            var dayy=new Array(3);
+                            dayy=$(this).attr("lay-ymd").split('-');
+                            if(dayy[1]<10){
+                                dayy[1]='0'+dayy[1];
+                            }
+                            if(dayy[2]<10){
+                                dayy[2]='0'+dayy[2];
+                            }
+                            $(this).append('<br><a day='+dayy[0]+"-"+dayy[1]+"-"+dayy[2]+'0'+' id="sw">可预约</a><div>——————</div><a day='+dayy[0]+"-"+dayy[1]+"-"+dayy[2]+'1'+' id="xw">可预约</a>');
+                        }
+                        $(this).addClass("laydate-disabled");
+                        iii++;
+                    });
+                    $('#dateform .layui-laydate-content table tr .laydate-day-next').text('');
+                    $('#dateform .layui-laydate-content table tr .laydate-day-prev').text('');
+                    $('a#sw,a#xw').click(function(){
+                        getAppointment($(this).attr('day'));
+                    });
+
+                   $.ajax({
+                        type:'get',
+                        data:{
+                            'hCode':$("#headteachers").val(),
+                            'sCode':$("#schoolareas").val(),
+                            'choiceDate':y+"-"+mm
+                        },
+                        url:'/reserve/appointment/getChoiceDateAppointmentInfo.do',
+                        dataType:'json',
+                        success:function(data){
+                           for(var i in data){
+                                $("#dateform .layui-laydate-content table tbody tr td a").each(function() {
+                                    if($(this).attr('day')==data[i].appointmentDate){
+                                        $(this).replaceWith('<div style="color:red;">已有预约</div>');
+                                    }
+                                });
+                            }
+                        },
+                        error:function(e){
+                            console.log(e);
+                        }
+                    });
+
+                }
+
+
+            }
+
+        });
+
+
+
+
+
+
+        function getAppointment(daydate){
+
+            layer.open({
+                id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                ,shade:0.3
+                ,title: false //不显示标题栏
+                ,closeBtn: false
+                ,area: ['400px', '480px'],
+                type: 1,
+                content:
+                    '<form class="layui-form" style="background-color:rgb(1,151,137);height:420px;"> ' +
+
+                    '<div class="layui-form-item">' +
+                    '<div class="layui-inline">' +
+                    '<h2 style="color:white;padding:30px;margin-left: 120px;">提交预约</h2>' +
+                    '</div></div><br>'+
+
+
+                    '<div class="layui-form-item">' +
+                    '<div class="layui-inline">' +
+                    '<label class="layui-form-label" style="color:white;" >手机号：</label>' +
+                    '<div class="layui-input-inline">' +
+                    '<input type="text"  required lay-verify="required" id="yyphonenumber"  class="layui-input" value="">' +
+                    '</div></div></div>'+
+
+                    '<div class="layui-form-item">' +
+                    '<div class="layui-inline">' +
+                    '<label class="layui-form-label" style="color:white;">预约人：</label>' +
+                    '<div class="layui-input-inline">' +
+                    '<input type="text"  required lay-verify="required" id="yyr"  class="layui-input" value="">' +
+                    '</div></div></div>'+
+
+                    '<div class="layui-form-item">' +
+                    '<div class="layui-inline">' +
+                    '<label class="layui-form-label" style="color:white;">提交验证码:</label>' +
+                    '<div class="layui-input-inline">' +
+                    '<input type="text"  required lay-verify="required" id="submitcheckcode"  class="layui-input" value=""><br><img id="checkcodeimg" />&nbsp;&nbsp;&nbsp;&nbsp;<a style="cursor:pointer;color: white;"id="changecode">看不清楚？</a>'+
+                    '</div></div></div>'+
+                    '</form>' ,
+                btnAlign: 'c',
+                btn: ['提交', '取消']
+                ,yes:function(index,layero){
+                    var outerindex=index;
+                    layui.use(['layer','jquery'], function () {
+                        var layer=layui.layer,
+                            $=layui.jquery;
+                        if($('#yyphonenumber').val()==""&&$('#yyphonenumber').val().length==0){
+                            layer.msg('预约电话为空', {
+                                icon: 2,
+                                time: 1000
+                            }, function(){
+                            });
+                            $('#yyphonenumber').focus();
+
+                            return false;
+                        }
+                        if(!(/^1[3|5|7|8]\d{9}$/.test($('#yyphonenumber').val()))){
+                            layer.msg('预约手机号不正确', {
+                                icon: 2,
+                                time: 1000
+                            }, function(){
+                            });
+                            $('#yyphonenumber').focus();
+
+                            return false;
+                        }
+
+
+                        if($('#yyr').val()==""&&$('#yyr').val().length==0){
+                            layer.msg('预约人信息为空', {
+                                icon: 2,
+                                time:1000
+                            }, function(){
+                            });
+                            $('#yyr').focus();
+
+                            return false;
+                        }
+                        if($('#submitcheckcode').val()==""&&$('#submitcheckcode').val().length==0){
+                            layer.msg('验证码为空', {
+                                icon: 2,
+                                time: 1000
+                            }, function(){
+                            });
+                            $('#submitcheckcode').focus();
+
+                            return false;
+                        }
+
+                        var rizi=daydate.substr(0,daydate.length-1);
+                        var sx=daydate.charAt(daydate.length-1);
+                        $.ajax({
+                            dataType:'text',
+                            url:'/reserve/appointment/testCodeData.do',
+                            data:{
+                                testCode:$('#submitcheckcode').val()
+                            },
+                            success:function (data) {
+                                if(data=="0"){
+                                    layer.msg('验证码不正确', {
+                                        icon: 2,
+                                        time: 1000
+                                    }, function(){
+                                    });
+                                    $('#submitcheckcode').focus();
+                                    return false;
+                                }else{
+                                    if(($('#yyphonenumber').val()!=""&&$('#yyphonenumber').val().length!=0)||(/^1[3|5|7|8]\d{9}$/.test($('#yyphonenumber').val()))
+                                        ||($('#yyr').val()!=""&&$('#yyr').val().length!=0)||
+                                        ($('#submitcheckcode').val()!=""&&$('#submitcheckcode').val().length!=0)){
+                                        layer.confirm('确认提交预约信息吗？', function(index){
+                                            $.ajax({
+                                                url:'/reserve/appointment/appointmentDeal.do',
+                                                dataType:'text',
+                                                data:{
+                                                    hCode: $('#headteachers').val(),
+                                                    sCode: $('#schoolareas').val(),
+                                                    name:$('#yyr').val(),
+                                                    tel:$('#yyphonenumber').val(),
+                                                    appointmentDate:rizi,
+                                                    appointmentTime:sx
+
+                                                },
+                                                success:function (data) {
+                                                    if(data=="1"){
+                                                        layer.msg('预约成功', {
+                                                            icon: 1,
+                                                            time: 1000
+                                                        }, function(){
+                                                            $('#dateform').html('');
+                                                            updtetable();
+                                                        });
+                                                    }else{
+                                                        layer.msg('预约失败', {
+                                                            icon: 2,
+                                                            time: 1000
+                                                        }, function(){
+                                                        });
+                                                    }
+                                                    layer.close(index);
+                                                    layer.close(outerindex);
+                                                },
+                                                error:function (e) {
+
+                                                }
+                                            });
+
+
+                                        });
+
+                                    }
+
+                                }
+                            },
+                            error:function (e) {
+                                console.log(e);
+                            }
+                        })
+                    });
+
+                }
+                ,success: function(index,layero){
+                    layui.use(['form','jquery'], function () {
+                        var form = layui.form;
+                        var $ = layui.jquery;
+                        $('#changecode').click(function () {
+                            $('#checkcodeimg').attr("src","/reserve/appointment/getCodeImage.do?t=" + Math.random());
+                        });
+                        $('#checkcodeimg').attr("src","/reserve/appointment/getCodeImage.do?t=" + Math.random());
+
+                    });
+                }
+            });
+
+        };
+
+
+        //日历插件调用方法
+        function loding_date(date_value,data){
+
+            laydate.render({
+                elem: '#dateform'
+                ,type: 'date'
+                ,theme: 'grid'
+                ,min:minDate1()
+                ,position: 'static'
+                ,range: false
+                ,value:date_value
+                ,btns:false
+                ,closeStop: '#dateform'
+                ,done: function(value, date, endDate){
+                }
+                , mark:data//重要json！
+
+            });
+        }
+
+        function updtetable(){
+            var data={};
+            var sss=$('#test1').val();
+            var y = sss.substr(0,4);
+            var m= sss.substr(5,6);
+            var mm=m.substr(0,2);
+            var day=y+"-"+mm+"-01";
+            if($("#headteachers").val().length!=0&&$("#headteachers").val()!=""&&$("#schoolareas").val()!=""&&$("#schoolareas").val().length!=0&&$('#test1').val()!=""&&$('#test1').val().length!=0){
+                loding_date(day ,data);
+                $(".layui-laydate-header").remove();
+                $(".layui-laydate-footer").remove();
+                $('#dateform .layui-laydate-content table tr .layui-this').css('background-color','white').css('color','black');
+                var iii=0;
+                $("#dateform .layui-laydate-content table tbody tr td").each(function() {
+                    if(iii==0||iii==6||iii==7||iii==13||iii==14||iii==20||iii==21||iii==27||iii==28||iii==34||iii==35){
+                        $(this).append('<div>&nbsp;</div><div style="color:red;">不可预约</div><div>&nbsp;</div>');
+                        $(this).css('color','#d2d2d2');
+                    }
+                    else if(new Date($(this).attr("lay-ymd")) < new Date(minDate1())){
+                        $(this).append('<div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div>');
+                        $(this).css('color','#d2d2d2');
+                    }
+                    else{
+                        var dayy=new Array(3);
+                        dayy=$(this).attr("lay-ymd").split('-');
+                        if(dayy[1]<10){
+                            dayy[1]='0'+dayy[1];
+                        }
+                        if(dayy[2]<10){
+                            dayy[2]='0'+dayy[2];
+                        }
+                        $(this).append('<br><a day='+dayy[0]+"-"+dayy[1]+"-"+dayy[2]+'0'+' id="sw">可预约</a><div>——————</div><a day='+dayy[0]+"-"+dayy[1]+"-"+dayy[2]+'1'+' id="xw">可预约</a>');
+                    }
+                    $(this).addClass("laydate-disabled");
+                    iii++;
+                });
+                $('#dateform .layui-laydate-content table tr .laydate-day-next').text('');
+                $('#dateform .layui-laydate-content table tr .laydate-day-prev').text('');
+                $('a#sw,a#xw').click(function(){
+                    getAppointment($(this).attr('day'));
+                });
+                $.ajax({
+                    type:'post',
+                    data:{
+                        'hCode':$("#headteachers").val(),
+                        'sCode':$("#schoolareas").val(),
+                        'choiceDate':y+"-"+mm
+                    },
+                    url:'/reserve/appointment/getChoiceDateAppointmentInfo.do',
+                    dataType:'json',
+                    success:function(data){
+                        for(var i in data){
+                            $("#dateform .layui-laydate-content table tbody tr td a").each(function() {
+                                if($(this).attr('day')==data[i].appointmentDate){
+                                    $(this).replaceWith('<div style="color:red;">已有预约</div>');
+                                }
+                            });
+                        }
+                    },
+                    error:function(e){
+                        console.log(e);
+                    }
+                });
+
+            }
+        }
+
+    });
+</script>
+</body>
+</html>

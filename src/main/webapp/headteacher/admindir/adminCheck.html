@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>管理员登录</title>
+    <meta charset="UTF-8">
+<link rel="stylesheet" href="../static/layui/css/layui.css">
+<script src="../static/layui/layui.js"></script>
+<script type="text/javascript" src="../js/jquery.js"></script>
+</head>
+<body>
+<ul class="layui-nav">
+  <li class="layui-nav-item" id="checkappointment"><a href="./searchresult.html" target="iframe_a">查看预约</a></li>
+  <li class="layui-nav-item"><a href="manage.html" target="iframe_a">管理员管理</a></li>
+  <li class="layui-nav-item"><a href="total.html" target="iframe_a">接待统计</a></li>
+    <li class="layui-nav-item" style="float: right;">
+    <a href="javascript:;" >欢迎您  masterAdmin</a>
+    <dl class="layui-nav-child">
+        <dd><a href="/reserve/headteacher/content/main.html">退出</a></dd>
+    </dl>
+    </li>
+</ul>
+
+
+<iframe id="iframe_a" name="iframe_a" scrolling="auto" frameborder="0" src="./searchresult.html" style="width:100%;height:99%;"></iframe>
+
+
+
+<script>
+layui.use(['element','jquery'], function(){
+    var $=layui.jquery;
+});
+FrameWH();
+$('#checkappointment').addClass('layui-this');
+$('.layui-nav-item').click(function(){
+	 FrameWH();
+})
+function FrameWH() {
+	var sh=$(window).height()-$('.layui-nav').height()-5;
+    var h = $(window).height() -41- 10 - 60 -10-44 -10;
+    $("iframe").css("height",sh+"px");
+}
+$(window).resize(function () {
+     FrameWH();
+})
+</script>
+</body>
+</html>
